@@ -6,8 +6,7 @@ def create_product(row):
     """
     create a product. maps field names from the sample csv to the column names
     """
-    try:
-        return db_execute("""
+    return db_execute("""
         INSERT INTO products ( pid, name, retail_price, discounted_price, flipkart_advantage, rating, overall_rating, product_specifications
         ) VALUES (
             :pid, :name, :retail_price, :discounted_price, :flipkart_advantage, :rating, :overall_rating, :product_specifications
@@ -23,8 +22,6 @@ def create_product(row):
         "product_specifications":  row['product_specifications'],
         })
 
-    except sqlite3.IntegrityError:
-        print("Could not insert row (Integrity Error)", row)
 
 def create_categories(row, product):
     categories = row['product_category_tree']
@@ -66,11 +63,14 @@ def seed():
     with open('flipkart_com-ecommerce_sample.csv') as fk_csv:
         products_csv = csv.DictReader(fk_csv)
         for row in products_csv:
-            product = create_product(row)
-            product = product[0]
-            create_categories(row, product)
-            create_images(row, product)
-            create_brand(row, product)
+            try:
+                product = create_product(row)
+                product = product[0]
+                create_categories(row, product)
+                create_images(row, product)
+                create_brand(row, product)
+            except sqlite3.IntegrityError:
+                print("Could not insert row (Integrity Error)", row)
 
 def clean():
     db_execute("DELETE FROM products;", ())
