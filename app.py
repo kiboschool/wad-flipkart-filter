@@ -19,10 +19,13 @@ def close_connection(exception):
 
 @app.get('/')
 def index():
-    page = ?
-    brand = ?
-    category = ?
-    search = ?
+    # page = ?
+    # brand = ?
+    # category = ?
+    # search = ?
+    # price_min = ?
+    # price_max = ?
+    # sort = ?
     products = get_paged_products(page)
     return render_template('index.html', products=products, page=page)
 

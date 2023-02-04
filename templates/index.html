@@ -1,0 +1,12 @@
+<ol>
+{% for product in products %}
+
+<li>
+  <img src="{{product.images[0].url}}" />
+  {{ product.name }}
+  From: {{ product.discount_price }}
+  {{ product.brand }}
+</li>
+
+{% endfor %}
+</ol>
