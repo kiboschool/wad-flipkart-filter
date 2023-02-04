@@ -1,12 +1,27 @@
-<ol>
-{% for product in products %}
+{% extends "shared/base.html" %}
 
-<li>
-  <img src="{{product.images[0].url}}" />
-  {{ product.name }}
-  From: {{ product.discount_price }}
-  {{ product.brand }}
-</li>
+{% block body %}
+<!-- categories w/ images -->
 
-{% endfor %}
-</ol>
+<!-- hero special carousel -->
+
+<h2>offers</h2>
+
+<!-- offers -->
+
+<!-- coupons -->
+
+<!-- category deal -->
+
+<!-- coupons -->
+
+<!-- category deal -->
+
+<!-- holiday deal -->
+
+<!-- coupons -->
+
+<!-- category deal -->
+
+<!-- brand deal -->
+{% endblock %}

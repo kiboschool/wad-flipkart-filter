@@ -1,5 +1,5 @@
-from flask import Flask, render_template, request, g, redirect
-from products.db import select_product_by_id
+from flask import Flask, render_template, request, g, redirect, abort
+from products.db import get_paged_products, select_product_by_id_with_details
 
 app = Flask(__name__)
 
@@ -19,17 +19,23 @@ def close_connection(exception):
 
 @app.get('/')
 def index():
+    return render_template('index.html')
+
+@app.get('/search')
+def search():
     # page = ?
     # brand = ?
-    # category = ?
+    # categories = ?
     # search = ?
     # price_min = ?
     # price_max = ?
     # sort = ?
-    products = get_paged_products(page)
-    return render_template('index.html', products=products, page=page)
+    products = get_paged_products()
+    return render_template('search.html', products=products)
 
-@app.get('/products/<id>')
+@app.get('/products/<product_id>')
 def show_product(product_id):
-    product = get_all_for_product(product_id)
+    product = select_product_by_id_with_details(product_id)
+    if not product:
+        abort(404, "No product with that id")
     return render_template("product.html", product=product)

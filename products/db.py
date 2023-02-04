@@ -1,11 +1,18 @@
 # Product Interface
 import sqlite3
 
-DATABASE_FILE = 'products.db'
+DATABASE_FILE = 'products/products.db'
+
+def dict_factory(cursor, row):
+    d = {}
+    for idx, col in enumerate(cursor.description):
+        d[col[0]] = row[idx]
+    return d
 
 def get_connection():
-    connection = sqlite3.connect('products.db')
-    connection.row_factory = sqlite3.Row
+    connection = sqlite3.connect(DATABASE_FILE)
+    connection.set_trace_callback(print)
+    connection.row_factory = dict_factory
     return connection
 
 # return the results from a database query
@@ -28,30 +35,14 @@ def db_execute(script, args):
     conn.close()
     return res
 
-def select_all_products():
-    cursor = connection.execute("SELECT * FROM products;")
-    return cursor.fetchall()
+def get_paged_products():
+    return db_query("SELECT * FROM products LIMIT 10;")
 
-def select_product_by_id(_id):
-    cursor = connection.execute("SELECT * FROM products WHERE id = ?;", [_id])
-    return cursor.fetchone()
-
-def products_cheaper_than(min_price):
-    cursor = connection.execute("SELECT * FROM products WHERE price < ?;", [min_price])
-    return cursor.fetchall()
-
-def get_last_product():
-    cursor = connection.execute("SELECT * FROM products ORDER BY id DESC LIMIT 1;")
-    return cursor.fetchone()
-
-def add_product(name, price, quantity):
-    connection.execute("INSERT INTO products (name, price, quantity) VALUES (?, ?, ?);", [name, price, quantity])
-    connection.commit()
-    last_product = get_last_product()
-    return last_product
-
-def product_details(product):
-    return f"{product['name']}: ${product['price']}. {product['quantity']} left in stock"
-
-def product_overview(product):
-    return f"{product['id']}    {product['name']}"
+def select_product_by_id_with_details(_id):
+    product = db_query("SELECT * FROM products WHERE products.id = ? LIMIT 1;", (_id,))
+    if not product:
+        return None
+    product['images'] = db_query("SELECT * FROM images WHERE images.product_id = ?;", (_id,))
+    product['brands'] = db_query("SELECT brands.name FROM product_brands JOIN brands ON product_brands.brand_id = brands.id WHERE product_brands.product_id = ?;", (_id,))
+    product['categories'] = db_query("SELECT categories.name FROM product_categories JOIN categories ON product_categories.category_id = categories.id WHERE product_categories.product_id = ?;", (_id,))
+    return product

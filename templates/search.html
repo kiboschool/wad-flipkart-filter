@@ -1,0 +1,35 @@
+{% extends "shared/base.html" %}
+{% block body %}
+<!-- categories -->
+
+<!-- filters -->
+  <!-- category -->
+  <!-- price -->
+  <!-- flipkart assured -->
+  <!-- ratings -->
+  <!-- brand -->
+
+<!-- showing x results of n for "term" -->
+  <!-- sort by: relevance, popularity, price-low, price-high, discount -->
+
+<ol class="4-wide-grid">
+{% for product in products %}
+
+<li>
+  <a href="url for product">
+    <img src="{# product['images'][0].url #}" />
+    {{ product.name }}
+    {{ product.ratings }}
+    {{ product.discount_price }}
+    <span class="strikethrough">{{ product.retail_price }}</span>
+    <span class="green">% off</span>
+    {{ flipkart_assured }}
+    {{ product.brand }}
+  </a>
+</li>
+
+{% endfor %}
+</ol>
+
+<!-- did you find what you were looking for? -->
+{% endblock %}

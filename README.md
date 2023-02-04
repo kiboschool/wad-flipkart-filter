@@ -40,8 +40,16 @@ product_brand
 
 ## Your Task
 
-## Instructions
+Add features to search:
+- currently filtered by like, price, brands
+- current sorts: default (relevance), ratings
+- add filter for flipkart assured
+- add filter for ratings (checkboxes)
+- add filter for categories
+- add sorting by price low-high and high-low
+- add sorting by discount
 
+## Instructions
 
 ## Data
 

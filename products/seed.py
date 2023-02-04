@@ -1,4 +1,5 @@
 import csv
+import os
 from db import db_query, db_execute
 import sqlite3
 
@@ -60,9 +61,14 @@ import pprint
 pp = pprint.PrettyPrinter(indent=4)
 
 def seed():
+    count = 0
     with open('flipkart_com-ecommerce_sample.csv') as fk_csv:
         products_csv = csv.DictReader(fk_csv)
         for row in products_csv:
+            if count % 1000 == 0:
+                # we know the sample has 20k rows, https://www.kaggle.com/datasets/PromptCloudHQ/flipkart-products
+                print(f"handling row {count} of 20000")
+            count += 1
             try:
                 product = create_product(row)
                 product = product[0]
@@ -72,14 +78,10 @@ def seed():
             except sqlite3.IntegrityError:
                 print("Could not insert row (Integrity Error)", row)
 
-def clean():
-    db_execute("DELETE FROM products;", ())
-    db_execute("DELETE FROM categories;", ())
-    db_execute("DELETE FROM images;", ())
-    db_execute("DELETE FROM brands;", ())
-    db_execute("DELETE FROM product_categories;", ())
-    db_execute("DELETE FROM product_brands;", ())
-
 if __name__ == "__main__":
-    clean()
+    input("drop database? (enter to continue, cmd+c to exit)")
+    os.remove("./products.db")
+    import initdb
+    input("create data from sample csv (enter to continue, cmd+c to exit)")
+    print("creating data. may take a few minutes...")
     seed()
