@@ -6,8 +6,12 @@
         <div class="text-xs font-normal">Explore <span class="text-yellow-300 font-bold">Plus+</span></div>
       </div>
       <form class="w-5/12" action="search">
-        <input class="text-gray-900 text-sm font-normal w-full -mr-10 border-none rounded-sm shadow-sm " type="search" name="q" placeholder="Search for products, brands, and more" {% if params %}
-          value="{{  params.q }}" {% endif %}>
+        <input
+          class="text-gray-900 text-sm font-normal w-full -mr-10 border-none rounded-sm shadow-sm "
+          type="search"
+          name="q"
+          placeholder="Search for products, brands, and more"
+          {% if params and params.q %} value="{{  params.q }}" {% endif %}>
         <input type="submit" value="🔍"></input>
       </form>
       <button class="bg-white py-1 px-10 text-blue-600 rounded-sm">Login</button>
