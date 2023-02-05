@@ -70,6 +70,19 @@ There are three routes that `app.py` serves:
 
 You should click through all of the pages to see how they currently behave. You'll be adding functionality to the search route and the search results page.
 
+### Tailwind and NPM
+
+This app uses [TailwindCSS](https://tailwindcss.com/) for styling.
+
+The styles are pre-built in `static/styles.css`, so you should not need npm or to install anything to complete the project.
+
+However, if you want to rebuild the styles, or if you want to edit the styles using tailwind, here's how to get started:
+
+```sh
+npm install # install the tailwind dependencies
+npm run watch-styles # watch and rebuild the styles when files change
+```
+
 ## Your Task
 
 Right now, the search feature can filter by the name of the item, a min and max price, and by brands. It can use the default sort, or it can sort by ratings.
@@ -83,6 +96,7 @@ Your task is to add the missing search filters and sorts:
 
 ## TODO
 - get search to work
-- styling
+  - brand and category search
+- styling / tailwind
 - add links to category and brand searches
-  - if there is a brand or category search, show something at the top of the search results
+- if there is a brand or category search, show something at the top of the search results
