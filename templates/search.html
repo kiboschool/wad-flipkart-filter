@@ -80,17 +80,17 @@
 
       <div class="flex text-sm gap-4 m-2 font-semibold">
         <h3>Sort By</h3>
-        {% for val in ["relevance", "rating", "price-low", "price-high", "discount"] %}
-        <input
-          type="radio"
-          value="{{val}}"
-          id="{{val}}"
-          name="sort"
-          class="hidden"
-          {% if params.sort==val or not params.sort %} checked {% endif %} />
-        <label for="{{val}}"
-        class="checked:text-blue-500 checked:font-bold"
-        >{{val|capitalize}}</label>
+         <input type="radio" value="relevance" id="relevance" name="sort" class="hidden"
+          {% if params.sort == None or params.sort == "relevance" %} checked {% endif %} />
+        <label for="relevance" class="{% if params.sort == "relevance" or params.sort == None %} text-blue-500 font-bold {% endif %}">
+          Relevance
+        </label>
+        {% for val in ["rating", "price-low", "price-high", "discount"] %}
+        <input type="radio" value="{{val}}" id="{{val}}" name="sort" class="hidden"
+          {% if params.sort==val %} checked {% endif %} />
+        <label for="{{val}}" class="{% if val == params.sort %} text-blue-500 font-bold {% endif %}">
+          {{val|capitalize}}
+        </label>
         {% endfor %}
         <input type="submit" value="Search" />
       </div>
