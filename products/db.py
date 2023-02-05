@@ -35,8 +35,47 @@ def db_execute(script, args):
     conn.close()
     return res
 
-def search_products():
-    return db_query("SELECT * FROM products LIMIT 10;")
+PER_PAGE = 40
+def search_products(params):
+    # if params['brands']:
+        #"brands": request.values.getlist('brand'),
+
+    # if params['categories']:
+        #"categories": request.values.getlist('category'),
+
+    sort_to_order = {
+        "price-low": "discounted_price ASC",
+        "price-high": "discounted_price DESC",
+        "rating": "rating DESC",
+        "relevance": "id ASC",
+        "discount": "CEIL(retail_price / discounted_price) DESC"
+    }
+    filter = " WHERE 1 = 1 "
+    if params["q"]:
+        filter += " AND name LIKE :query "
+        params["query"] = f"%{params['q']}%"
+    if params["price_min"]:
+        filter += " AND discounted_price > :price_min "
+    if params["price_max"]:
+        filter += " AND discounted_price < :price_max "
+    if params["fk_advantage"]:
+        filter += " AND flipkart_advantage = true "
+    if params["ratings"]:
+        if '2' in params['ratings']:
+            filter += " AND rating > 2"
+        elif '3' in params['ratings']:
+            filter += " AND rating > 3"
+        elif '4' in params['ratings']:
+            filter += " AND rating > 4"
+
+    order = " ORDER BY " + sort_to_order.get(params['sort'], "id ASC ")
+    products_query = "SELECT * FROM products "
+    count_query = "SELECT COUNT(*) FROM products "
+    params["offset"] = params['page'] * PER_PAGE
+    params["limit"] = PER_PAGE
+    results = db_query(products_query + filter + order + " LIMIT :limit OFFSET :offset;", params)
+    count = db_query(count_query + filter, params)['COUNT(*)']
+    return results, count
 
 def select_product_by_id_with_details(_id):
     product = db_query("SELECT * FROM products WHERE products.id = ? LIMIT 1;", (_id,))

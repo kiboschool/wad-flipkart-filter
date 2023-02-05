@@ -1,73 +1,92 @@
-{% extends "shared/base.html" %}
 <!-- search results page -->
+{% extends "shared/base.html" %}
+<!-- title -->
+{% block title %}Search Results {% endblock %}
+<!-- rest is body-->
 {% block body %}
 <!-- category nav -->
 {% include "shared/categories.html" %}
 
-<form>
-  <input type="hidden" name="q" value="{{q}}">
+<form action="search">
+  <input type="hidden" name="q" {% if params.q %} value="{{  params.q }}" {% endif %} />
   <div>
     <h3>Filters</h3>
-    <div><h4>Categories</h4></div>
+    {% if params.categories %}
+      <div><h4>Categories</h4></div>
+      {% for category in params.categories %}
+        <input type="checkbox" value="{{category}}" id="category-{{category|lower|replace(' ', '-')}}" name="category" checked />
+        <label for="category-{{category|lower|replace(' ', '-')}}">{{category}}</label>
+      {% endfor %}
+    {% endif %}
+    {% if params.brands %}
+      <div><h4>Brand</h4></div>
+      {% for brand in params.brands %}
+        <input type="checkbox" value="{{brand}}" id="brand-{{brand|lower|replace(' ', '-')}}" name="brand" checked />
+        <label for="brand-{{brand|lower|replace(' ', '-')}}">{{brand}}</label>
+      {% endfor %}
+    {% endif %}
     <div>
       <h4>Price</h4>
       <!-- Select dropdowns instead of number inputs -->
       <label for="min-price">Minimum</label>
-      <input
-        type="number"
-        name="min-price"
-        id="min-price"
-        min="0"
-        default="0" />
+      <input type="number" name="min-price" id="min-price" min="0" default="0" />
       <label for="max-price">Maximum</label>
       <input type="number" name="max-price" id="max-price" min="0" />
     </div>
     <div>
-      <input type="checkbox" id="fk-assured" name="fk-assured" />
-      <label for="fk-assured">f-assured</label>
+      <input type="checkbox" id="fk-advantage" name="fk-advantage" {% if params.fk_advantage %} checked {% endif %}}/>
+      <label for="fk-advantage">✅ fk-advantage</label>
     </div>
-    <div><h4>Brand</h4></div>
     <div>
       <h4>Customer Ratings</h4>
-      <input type="checkbox" id="4-plus" name="ratings" />
+      <input type="checkbox" id="4-plus" name="ratings" value="4" {% if '4' in params.ratings %} checked {% endif %}/>
       <label for="4-plus">4 ★ & above</label>
-      <input type="checkbox" id="3-plus" name="ratings" />
+      <input type="checkbox" id="3-plus" name="ratings" value="3" {% if '3' in params.ratings %} checked {% endif %}/>
       <label for="3-plus">3 ★ & above</label>
-      <input type="checkbox" id="2-plus" name="ratings" />
+      <input type="checkbox" id="2-plus" name="ratings" value="2" {% if '2' in params.ratings %} checked {% endif %}/>
       <label for="2-plus">2 ★ & above</label>
     </div>
   </div>
   <div>
     <h3>Sort By</h3>
-    <input type="radio" value="relevance" id="relevance" name="sort" />
+    <input type="radio" value="relevance" id="relevance" name="sort" {% if params.sort == "relevance" or not params.sort %} checked {% endif %}/>
     <label for="relevance">Relevance</label>
-    <input type="radio" value="rating" id="rating" name="sort" />
+    <input type="radio" value="rating" id="rating" name="sort" {% if params.sort == "rating" %} checked {% endif %}/>
     <label for="rating">Rating</label>
-    <input type="radio" value="price-low" id="price-low" name="sort" />
+    <input type="radio" value="price-low" id="price-low" name="sort" {% if params.sort == "price-low" %} checked {% endif %}/>
     <label for="price-low">Price - Low to High</label>
-    <input type="radio" value="price-high" id="price-high" name="sort" />
+    <input type="radio" value="price-high" id="price-high" name="sort" {% if params.sort == "price-high" %} checked {% endif %}/>
     <label for="price-high">Price - High to Low</label>
-    <input type="radio" value="discount" id="discount" name="sort" />
+    <input type="radio" value="discount" id="discount" name="sort" {% if params.sort == "discount" %} checked {% endif %}/>
     <label for="discount">Discount</label>
   </div>
-  <input type="button" value="Search" />
+  <input type="submit" value="Search" />
 </form>
 
-<div>Showing 1-40 products of 20,000</div>
+{% set start = params.page * page_size %}
+<div>Showing {{start + 1}}-{{start + page_size}} of {{ count }} results {% if params.q %} for "{{ params.q }}" {% endif %}</div>
 
 <ul class="4-wide-grid">
   {% for product in products %}
 
   <li>
     <a href="/products/{{product.id}}">
-      <img src="{# product['images'][0].url #}" />
-<div>
-      {{ product.name }} {{ product.ratings }} {{ product.discount_price }}
-</div>
-<div>
-      <span class="strikethrough">{{ product.retail_price }}</span>
-      <span class="green">% off</span>
-      {{ product.flipkart_assured }}
+      <img src="{# product.images[0].url #}" />
+      <div>{{ product.name }}</div>
+      {% if product.rating is number %}
+      <div>{{ product.rating }}</div>
+      {% endif %} {% if product.flipkart_advantage %}
+      <div>✅ Fakekart Advantage</div>
+      {% endif %}
+      <div>
+        <span>{{ product.discounted_price }}</span>
+        <span class="strikethrough">{{ product.retail_price }}</span>
+      {% if product.discounted_price is number and product.retail_price is number %}
+        <span class="green">
+          {{ (100 * (1 - product.discounted_price / product.retail_price)) |
+          round | int }}% off
+        </span>
+      {% endif %}
       </div>
       <div>{{ product.brand }}</div>
     </a>
@@ -75,9 +94,23 @@
 
   {% endfor %}
 </ul>
-<!-- Pager -->
 
-<!-- did you find what you were looking for? -->
+<!-- Pagination -->
+{% set total_pages = ((count/page_size) | round(0, 'ceil')|int) %}
+{% if total_pages > 1 %}
+<div>Page {{params.page}} of {{ total_pages }}</div>
+
+{% if params.page > 0 %}
+<a href="{{ request.path }}?{{ request.query_string.decode() }}&page={{ params.page - 1 }}">Previous</a>
+{% endif %}
+
+{% for i in range(params.page, ([total_pages, params.page + 10]|min)) %}
+  <a {% if i == params.page %}class="current"{% endif %} href="{{ request.path }}?{{ request.query_string.decode() }}&page={{ i }}">{{i}}</a>
+{% endfor %}
+
+<a href="{{ request.path }}?{{ request.query_string.decode() }}&page={{ params.page + 1 }}">Next</a>
+{% endif %}
+
 <div>
   Did you find what you were looking for?
   <button>Yes</button>

@@ -80,3 +80,9 @@ Your task is to add the missing search filters and sorts:
 - add filter for categories
 - add sorting by price low-high and high-low
 - add sorting by discount
+
+## TODO
+- get search to work
+- styling
+- add links to category and brand searches
+  - if there is a brand or category search, show something at the top of the search results
