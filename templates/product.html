@@ -1,20 +1,86 @@
 {% extends "shared/base.html" %}
+
 {% block body %}
 
-<!-- categories -->
+{% include "shared/categories.html" %}
 
-<!-- image carousel -->
-<!-- add to cart / buy now -->
+<div>
+  <div>
+    <ul>
+  {% for image in product.images %}
+    <li>
+      <img src="{{image.url}}">
+    </li>
+    {% endfor %}
+    </ul>
+  </div>
+  <div>
+    <img src="{{product.images[0].url}}">
+  </div>
+</div>
 
-<!-- category -->
+<div>
+  <button>🛒 Add to cart</button>
+  <button>⚡️ Buy now</button>
+</div>
+
+<div>
+  {% for category in product.categories %}
+  <span><a>{{category.name}} &gt;</a></span>
+  {% endfor %}
+</div>
 <h1>{{ product.name }}</h1>
-<!-- ratings -->
-<!-- bool : fk assured -->
 
-<!-- ratings -->
+<div>
+  <div>{{ product.rating }} ★</div>
+  <div>N Ratings and Reviews</div>
+</div>
 
-<!-- seller: brand -->
-<!-- specifications -->
+{% if product.flipkart_advantage %}
+<div>✅ Fakekart Advantage</div>
+{% endif %}
+
+<span>Special Price</span>
+{{ product.discounted_price }}
+<span class="strikethrough">{{ product.retail_price }}</span>
+<span class="green">% off</span>
+<div>info</div>
+
+<div>
+  <h3>Available Offers</h3>
+  <div>
+    <span>Bank Offer</span> 10% off on AU Bank Credit Card Transactions, up to
+    ₹1,500. On orders of ₹10,000 and above<a href="">T&C</a>
+  </div>
+  <div>
+    <span>Bank Offer</span> 10% off on Indian Bank Mastercard Debit Cards, up to
+    ₹250. On orders of ₹2000 and above<a href="">T&C</a>
+  </div>
+  <div>
+    <span>Bank Offer</span>5% Cashback on Flipkart Axis Bank Card<a href=""
+      >T&C</a
+    >
+  </div>
+  <div>
+    <span>Special Price</span>Get extra 9% off (price inclusive of
+    cashback/coupon) <a href="">T&C</a>
+  </div>
+  <div>
+    <a href="#">View 5 More offers</a>
+  </div>
+</div>
+
+<div>
+  <h4>Delivery</h4>
+  <input type="text" placeholder="Enter Delivery Pincode" />
+  <span>Delivery By Tomorrow</span><span>Free</span><span>₹40</span>
+  <div>if ordered before 6:29am</div>
+</div>
+
+<div>
+  <h4>Sellers</h4>
+  {{ product.brand.name }}
+</div>
 
 <!-- similar products -->
 <!-- bought together products -->

@@ -1,35 +1,86 @@
 {% extends "shared/base.html" %}
+<!-- search results page -->
 {% block body %}
-<!-- categories -->
+<!-- category nav -->
+{% include "shared/categories.html" %}
 
-<!-- filters -->
-  <!-- category -->
-  <!-- price -->
-  <!-- flipkart assured -->
-  <!-- ratings -->
-  <!-- brand -->
+<form>
+  <input type="hidden" name="q" value="{{q}}">
+  <div>
+    <h3>Filters</h3>
+    <div><h4>Categories</h4></div>
+    <div>
+      <h4>Price</h4>
+      <!-- Select dropdowns instead of number inputs -->
+      <label for="min-price">Minimum</label>
+      <input
+        type="number"
+        name="min-price"
+        id="min-price"
+        min="0"
+        default="0" />
+      <label for="max-price">Maximum</label>
+      <input type="number" name="max-price" id="max-price" min="0" />
+    </div>
+    <div>
+      <input type="checkbox" id="fk-assured" name="fk-assured" />
+      <label for="fk-assured">f-assured</label>
+    </div>
+    <div><h4>Brand</h4></div>
+    <div>
+      <h4>Customer Ratings</h4>
+      <input type="checkbox" id="4-plus" name="ratings" />
+      <label for="4-plus">4 ★ & above</label>
+      <input type="checkbox" id="3-plus" name="ratings" />
+      <label for="3-plus">3 ★ & above</label>
+      <input type="checkbox" id="2-plus" name="ratings" />
+      <label for="2-plus">2 ★ & above</label>
+    </div>
+  </div>
+  <div>
+    <h3>Sort By</h3>
+    <input type="radio" value="relevance" id="relevance" name="sort" />
+    <label for="relevance">Relevance</label>
+    <input type="radio" value="rating" id="rating" name="sort" />
+    <label for="rating">Rating</label>
+    <input type="radio" value="price-low" id="price-low" name="sort" />
+    <label for="price-low">Price - Low to High</label>
+    <input type="radio" value="price-high" id="price-high" name="sort" />
+    <label for="price-high">Price - High to Low</label>
+    <input type="radio" value="discount" id="discount" name="sort" />
+    <label for="discount">Discount</label>
+  </div>
+  <input type="button" value="Search" />
+</form>
 
-<!-- showing x results of n for "term" -->
-  <!-- sort by: relevance, popularity, price-low, price-high, discount -->
+<div>Showing 1-40 products of 20,000</div>
 
-<ol class="4-wide-grid">
-{% for product in products %}
+<ul class="4-wide-grid">
+  {% for product in products %}
 
-<li>
-  <a href="url for product">
-    <img src="{# product['images'][0].url #}" />
-    {{ product.name }}
-    {{ product.ratings }}
-    {{ product.discount_price }}
-    <span class="strikethrough">{{ product.retail_price }}</span>
-    <span class="green">% off</span>
-    {{ flipkart_assured }}
-    {{ product.brand }}
-  </a>
-</li>
+  <li>
+    <a href="/products/{{product.id}}">
+      <img src="{# product['images'][0].url #}" />
+<div>
+      {{ product.name }} {{ product.ratings }} {{ product.discount_price }}
+</div>
+<div>
+      <span class="strikethrough">{{ product.retail_price }}</span>
+      <span class="green">% off</span>
+      {{ product.flipkart_assured }}
+      </div>
+      <div>{{ product.brand }}</div>
+    </a>
+  </li>
 
-{% endfor %}
-</ol>
+  {% endfor %}
+</ul>
+<!-- Pager -->
 
 <!-- did you find what you were looking for? -->
+<div>
+  Did you find what you were looking for?
+  <button>Yes</button>
+  <button>No</button>
+</div>
 {% endblock %}
