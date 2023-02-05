@@ -78,22 +78,20 @@
         {% if params.q %} for "{{ params.q }}" {% endif %}
       </div>
 
-      <div class="flex text-sm gap-4 m-2">
+      <div class="flex text-sm gap-4 m-2 font-semibold">
         <h3>Sort By</h3>
-        <input type="radio" value="relevance" id="relevance" name="sort" {% if params.sort=="relevance" or not
-          params.sort %} checked {% endif %} />
-        <label for="relevance">Relevance</label>
-        <input type="radio" value="rating" id="rating" name="sort" {% if params.sort=="rating" %} checked {% endif %} />
-        <label for="rating">Rating</label>
-        <input type="radio" value="price-low" id="price-low" name="sort" {% if params.sort=="price-low" %} checked {%
-          endif %} />
-        <label for="price-low">Price - Low to High</label>
-        <input type="radio" value="price-high" id="price-high" name="sort" {% if params.sort=="price-high" %} checked {%
-          endif %} />
-        <label for="price-high">Price - High to Low</label>
-        <input type="radio" value="discount" id="discount" name="sort" {% if params.sort=="discount" %} checked {% endif
-          %} />
-        <label for="discount">Discount</label>
+        {% for val in ["relevance", "rating", "price-low", "price-high", "discount"] %}
+        <input
+          type="radio"
+          value="{{val}}"
+          id="{{val}}"
+          name="sort"
+          class="hidden"
+          {% if params.sort==val or not params.sort %} checked {% endif %} />
+        <label for="{{val}}"
+        class="checked:text-blue-500 checked:font-bold"
+        >{{val|capitalize}}</label>
+        {% endfor %}
         <input type="submit" value="Search" />
       </div>
 
