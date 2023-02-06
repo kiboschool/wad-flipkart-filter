@@ -49,13 +49,17 @@
         <!-- Select dropdowns instead of number inputs -->
         <select class="py-0 pr-6 text-sm" name="min-price" id="min-price">
           {% for val in [0, 100, 200, 500, 750, 1000]%}
-            <option value="{{val}}"{% if params.min_price == val %}selected{% endif %}>₹{{val}}</option>
+            <option
+              value="{{val}}"
+              {% if params.price_min == val|string %} selected {% endif %}>
+              ₹{{val}}
+            </option>
           {% endfor %}
         </select>
         <label class="text-xs text-gray-500 px-4" for="max-price">to</label>
-        <select class="py-0 pr-6 text-sm" name="min-price" id="min-price">
-          {% for val in [200, 500, 750, 1000, "2000+"]%}
-            <option value="{{val}}"{% if params.min_price == val %}selected{% endif %}>₹{{val}}</option>
+        <select class="py-0 pr-6 text-sm" name="max-price" id="max-price">
+          {% for val in ["2000+", 1000, 750, 500, 200, 100]%}
+            <option value="{{val}}"{% if params.price_max == val|string %}selected{% endif %}>₹{{val}}</option>
           {% endfor %}
         </select>
       </div>

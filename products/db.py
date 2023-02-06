@@ -56,7 +56,7 @@ def search_products(params):
         params["query"] = f"%{params['q']}%"
     if params["price_min"]:
         filter += " AND discounted_price > :price_min "
-    if params["price_max"]:
+    if params["price_max"] and params["price_max"].isnumeric():
         filter += " AND discounted_price < :price_max "
     if params["fk_advantage"]:
         filter += " AND flipkart_advantage = 'true'"
