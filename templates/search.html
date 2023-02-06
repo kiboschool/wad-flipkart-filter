@@ -11,13 +11,17 @@
   <div class="flex">
     <div class="bg-white m-2 shadow-lg rounded-2 basis-1/5">
       <input type="hidden" name="q" {% if params.q %} value="{{  params.q }}" {% endif %} />
-      <h3 class="text-lg font-medium border-b-2 border-b-gray-100 p-4">Filters</h3>
+      <h3 class="text-lg font-medium border-b-2 border-b-gray-100 p-4 pb-3">Filters</h3>
       {% if params.categories %}
       <div class="p-4 border-b-2 border-b-gray-100">
         <h4 class="text-xs uppercase font-semibold">Categories</h4>
         {% for category in params.categories %}
         <div class="text-sm p-1 text-gray-800">
-          <input type="checkbox" value="{{category}}" id="category-{{category|lower|replace(' ', '-')}}" name="category"
+          <input
+            type="checkbox"
+            value="{{category}}"
+            id="category-{{category|lower|replace(' ', '-')}}"
+            name="category"
             checked />
           <label for="category-{{category|lower|replace(' ', '-')}}">
             {{category}}
@@ -31,7 +35,11 @@
       <div class="p-4 border-b-2 border-b-gray-100">
         <h4>Brand</h4>
         {% for brand in params.brands %}
-        <input type="checkbox" value="{{brand}}" id="brand-{{brand|lower|replace(' ', '-')}}" name="brand" checked />
+        <input
+          type="checkbox"
+          value="{{brand}}"
+          id="brand-{{brand|lower|replace(' ', '-')}}"
+          name="brand" checked />
         <label for="brand-{{brand|lower|replace(' ', '-')}}">{{brand}}</label>
         {% endfor %}
       </div>
@@ -78,21 +86,31 @@
         {% if params.q %} for "{{ params.q }}" {% endif %}
       </div>
 
-      <div class="flex text-sm gap-4 m-2 font-semibold">
-        <h3>Sort By</h3>
-         <input type="radio" value="relevance" id="relevance" name="sort" class="hidden"
+      <div class="flex text-sm gap-4 m-2 font-medium">
+        <h3 class="font-bold">Sort By</h3>
+        <ul class="flex gap-4">
+        <li>
+         <input type="radio" value="relevance" id="relevance" name="sort" class="sr-only peer"
           {% if params.sort == None or params.sort == "relevance" %} checked {% endif %} />
-        <label for="relevance" class="{% if params.sort == "relevance" or params.sort == None %} text-blue-500 font-bold {% endif %}">
+        <label
+          for="relevance"
+          class="cursor-pointer pb-2 peer-checked:font-bold peer-checked:text-blue-500 peer-checked:border-b-blue-500 peer-checked:border-b-2">
           Relevance
         </label>
+        </li>
         {% for val in ["rating", "price-low", "price-high", "discount"] %}
-        <input type="radio" value="{{val}}" id="{{val}}" name="sort" class="hidden"
+        <li>
+        <input type="radio" value="{{val}}" id="{{val}}" name="sort" class="sr-only peer"
           {% if params.sort==val %} checked {% endif %} />
-        <label for="{{val}}" class="{% if val == params.sort %} text-blue-500 font-bold {% endif %}">
+        <label
+        for="{{val}}"
+        class="cursor-pointer hover:ring-blue-400 hover:ring-2 p-2 peer-checked:font-bold peer-checked:text-blue-500  peer-checked:border-b-blue-500 peer-checked:border-b-2">
           {{val|capitalize}}
         </label>
+        </li>
         {% endfor %}
-        <input type="submit" value="Search" />
+        </ul>
+        <input class="ring-1 ring-black focus:ring-blue-200 px-8 py-1 cursor-pointer hover:ring-blue-700 hover:text-blue-700" type="submit" value="Sort" />
       </div>
 
       <ul class="4-wide-grid">
@@ -100,7 +118,9 @@
 
         <li>
           <a href="/products/{{product.id}}">
-            <img src="{# product.images[0].url #}" />
+            {% if product.image %}
+              <img src="{{ product.image.url }}" />
+            {% endif %}
             <div>{{ product.name }}</div>
             {% if product.rating is number %}
             <div>{{ product.rating }}</div>
@@ -152,8 +172,8 @@
 
       <div>
         Did you find what you were looking for?
-        <button>Yes</button>
-        <button>No</button>
+        <div>Yes</div>
+        <div>No</div>
       </div>
     </div>
   </div>
