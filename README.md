@@ -90,13 +90,11 @@ Right now, the search feature can filter by the name of the item, a min and max 
 Your task is to add the missing search filters and sorts:
 - add filter for items that are flipkart assured
 - add filter for ratings (checkboxes)
-- add filter for categories
 - add sorting by price low-high and high-low
 - add sorting by discount
+- add filter for categories
 
 ## TODO
-- get search to work
-  - brand and category search
-- styling / tailwind
-- add links to category and brand searches
-- if there is a brand or category search, show something at the top of the search results
+- category search
+- add index page links to category and brand searches
+- orm? some nicer way to build the queries? seems like a tough codebase to walk into
