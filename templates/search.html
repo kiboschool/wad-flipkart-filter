@@ -9,7 +9,7 @@
 
 <form action="search">
   <div class="flex">
-    <div class="bg-white m-2 shadow-lg rounded-2 basis-1/5">
+    <div class="bg-white m-2 shadow-lg rounded-2 basis-1/5 h-fit">
       <input type="hidden" name="q" {% if params.q %} value="{{  params.q }}" {% endif %} />
       <h3 class="text-lg font-medium border-b-2 border-b-gray-100 p-4 pb-3">Filters</h3>
       {% if params.categories %}
@@ -113,33 +113,36 @@
         <input class="ring-1 ring-black focus:ring-blue-200 px-8 py-1 cursor-pointer hover:ring-blue-700 hover:text-blue-700" type="submit" value="Sort" />
       </div>
 
-      <ul class="4-wide-grid">
+      <ul class="grid grid-cols-4 grid-rows-10 gap-2">
         {% for product in products %}
 
-        <li>
+        <li class="col-span-1 row-span-1 h-96 hover:shadow-xl p-4">
           <a href="/products/{{product.id}}">
             {% if product.image %}
-              <img src="{{ product.image.url }}" />
+              <img class="h-3/4 aspect-auto" src="{{ product.image.url }}" />
             {% endif %}
-            <div>{{ product.name }}</div>
+
+            <div class="text-sm font-normal truncate w-full">{{ product.name }}</div>
             {% if product.rating is number %}
-            <div>{{ product.rating }}</div>
+            <span class="bg-green-700 text-white text-xs rounded-sm px-2 py-0.5">{{ product.rating }} ★</span>
             {% endif %}
 
             {% if product.flipkart_advantage %}
-            <div>✅ Fakekart Advantage</div>
+            <span class="bg-blue-500 text-white text-xs italic pr-2 font-semibold rounded-md">
+              <span class="bg-yellow-500 text-blue-500 text-xs rounded-xl border-2 border-blue-500 p-1 font-bold">Fk</span>
+              Assured
+            </span>
             {% endif %}
 
-            <div>
-              <span>{{ product.discounted_price }}</span>
-              <span class="strikethrough">{{ product.retail_price }}</span>
-              {% if product.discounted_price is number and product.retail_price is number %}
-              <span class="green">
+            <div class="flex items-baseline gap-2 p-1">
+              <span class="font-bold">₹{{ product.discounted_price }}</span>
+              {% if product.discounted_price is number and product.retail_price is number and product.discounted_price != product.retail_price %}
+              <span class="text-sm text-gray-500 line-through">₹{{ product.retail_price }}</span>
+              <span class="text-green-600 text-xs font-semibold">
                 {{ (100 * (1 - product.discounted_price / product.retail_price)) | round | int }}% off
               </span>
               {% endif %}
             </div>
-            <div>{{ product.brand }}</div>
           </a>
         </li>
 
@@ -147,33 +150,44 @@
       </ul>
 
       <!-- Pagination -->
+      <!-- ...it is challenging to do manually -->
       {% set total_pages = ((count/page_size) | round(0, 'ceil')|int) %}
 
       {% if total_pages > 1 %}
-      <div>Page {{params.page}} of {{ total_pages }}</div>
+        <div class="m-2 p-2 flex">
+          <div class="text-sm shrink-0">Page {{params.page}} of {{ total_pages }}</div>
 
-      {% if params.page > 0 %}
-      <a href="{{ request.path }}?{{ request.query_string.decode() }}&page={{ params.page - 1 }}">
-        Previous
-      </a>
+          <div class="m-auto flex gap-4 font-semibold text-sm">
+            {% if params.page > 0 %}
+            {% set next_args = request.args.copy() %}
+            {% set x = next_args.__setitem__("page", params.page - 1) %}
+              <a class="uppercase px-3 py-0 leading-8 text-blue-500" href="{{ url_for('search', **next_args) }}">
+                Previous
+              </a>
+            {% endif %}
+
+            {% for i in range(params.page, ([total_pages, params.page + 10]|min)) %}
+              {% set args = request.args.copy() %}
+              {% set _x=args.__setitem__("page", i) %}
+              <a class="rounded-full px-3 py-0 w-8 h-8 leading-8 {% if i == params.page %} bg-blue-500  text-white {% endif %}"
+                href="{{ url_for('search', **args) }}">
+                {{i}}
+              </a>
+            {% endfor %}
+
+            {% set prev_args = request.args.copy() %}
+            {% set _x=prev_args.__setitem__("page", params.page + 1) %}
+            <a class="uppercase px-3 py-0 leading-8 text-blue-500" href="{{ url_for('search', **prev_args) }}">
+              Next
+            </a>
+          </div>
+        </div>
       {% endif %}
 
-      {% for i in range(params.page, ([total_pages, params.page + 10]|min)) %}
-      <a class="{% if i == params.page %}font-bold{% endif %}"
-        href="{{ request.path }}?{{ request.query_string.decode() }}&page={{ i }}">
-        {{i}}
-      </a>
-      {% endfor %}
-
-      <a href="{{ request.path }}?{{ request.query_string.decode() }}&page={{ params.page + 1 }}">
-        Next
-      </a>
-      {% endif %}
-
-      <div>
-        Did you find what you were looking for?
-        <div>Yes</div>
-        <div>No</div>
+      <div class="p-4 flex gap-2 items-baseline font-bold">
+        <span class="">Did you find what you were looking for?</span>
+        <span class="text-sm px-8 py-2 cursor-pointer border rounded-sm border-gray-300">Yes</span>
+        <span class="text-sm px-8 py-2 cursor-pointer border rounded-sm border-gray-300">No</span>
       </div>
     </div>
   </div>

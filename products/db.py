@@ -16,13 +16,13 @@ def get_connection():
     return connection
 
 # return the results from a database query
-def db_query(query, args=()):
+def db_query(query, args=(), one=False):
     conn = get_connection()
     cur = conn.execute(query, args)
     results = cur.fetchall()
     cur.close()
     conn.close()
-    if len(results) == 1:
+    if one:
         return results[0]
     else:
         return results
@@ -70,12 +70,13 @@ def search_products(params):
 
     order = " ORDER BY " + sort_to_order.get(params['sort'], "id ASC ")
     products_query = "SELECT * FROM products "
+    # pagination is hard without https://flask-sqlalchemy.palletsprojects.com/en/3.0.x/pagination/
     params["offset"] = params['page'] * PER_PAGE
     params["limit"] = PER_PAGE
     results = db_query(products_query + filter + order + " LIMIT :limit OFFSET :offset;", params)
     select_images(results)
     count_query = "SELECT COUNT(*) FROM products "
-    count = db_query(count_query + filter, params)['COUNT(*)']
+    count = db_query(count_query + filter, params, one=True)['COUNT(*)']
     return results, count
 
 # supplements the product search results with the associated images
@@ -88,7 +89,7 @@ def select_images(products):
         products_by_id[image['product_id']]['image'] = image
 
 def select_product_by_id_with_details(_id):
-    product = db_query("SELECT * FROM products WHERE products.id = ? LIMIT 1;", (_id,))
+    product = db_query("SELECT * FROM products WHERE products.id = ? LIMIT 1;", (_id,), one=True)
     if not product:
         return None
     product['images'] = db_query("SELECT * FROM images WHERE images.product_id = ?;", (_id,))
