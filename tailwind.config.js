@@ -3,7 +3,12 @@ module.exports = {
   mode: 'jit',
   content: ['./templates/**/*.html'],
   theme: {
-    extend: {},
+    extend: {
+      spacing: {
+        '128': '32rem',
+        '144': '36rem',
+      },
+    },
   },
   plugins: [
     require('@tailwindcss/forms'),

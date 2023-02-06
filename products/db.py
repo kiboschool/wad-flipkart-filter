@@ -93,6 +93,6 @@ def select_product_by_id_with_details(_id):
     if not product:
         return None
     product['images'] = db_query("SELECT * FROM images WHERE images.product_id = ?;", (_id,))
-    product['brand'] = db_query("SELECT brands.name FROM product_brands JOIN brands ON product_brands.brand_id = brands.id WHERE product_brands.product_id = ?;", (_id,))
+    product['brand'] = db_query("SELECT brands.name FROM product_brands JOIN brands ON product_brands.brand_id = brands.id WHERE product_brands.product_id = ?;", (_id,), one=True)
     product['categories'] = db_query("SELECT categories.name FROM product_categories JOIN categories ON product_categories.category_id = categories.id WHERE product_categories.product_id = ?;", (_id,))
     return product
