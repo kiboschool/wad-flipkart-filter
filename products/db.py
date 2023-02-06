@@ -59,7 +59,7 @@ def search_products(params):
     if params["price_max"]:
         filter += " AND discounted_price < :price_max "
     if params["fk_advantage"]:
-        filter += " AND flipkart_advantage = true "
+        filter += " AND flipkart_advantage = 'true'"
     if params["ratings"]:
         if '2' in params['ratings']:
             filter += " AND rating > 2"

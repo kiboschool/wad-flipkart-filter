@@ -14,7 +14,7 @@
       <h3 class="text-lg font-medium border-b-2 border-b-gray-100 p-4 pb-3">Filters</h3>
       {% if params.categories %}
       <div class="p-4 border-b-2 border-b-gray-100">
-        <h4 class="text-xs uppercase font-semibold">Categories</h4>
+        <h4 class="text-sm uppercase font-semibold">Categories</h4>
         {% for category in params.categories %}
         <div class="text-sm p-1 text-gray-800">
           <input
@@ -45,28 +45,45 @@
       </div>
       {% endif %}
       <div class="p-4 border-b-2 border-b-gray-100">
-        <h4>Price</h4>
+        <h4 class="text-sm uppercase font-semibold mb-2">Price</h4>
         <!-- Select dropdowns instead of number inputs -->
-        <label for="min-price">Minimum</label>
-        <input type="number" name="min-price" id="min-price" min="0" default="0" />
-        <label for="max-price">Maximum</label>
-        <input type="number" name="max-price" id="max-price" min="0" />
+        <select class="py-0 pr-6 text-sm" name="min-price" id="min-price">
+          {% for val in [0, 100, 200, 500, 750, 1000]%}
+            <option value="{{val}}"{% if params.min_price == val %}selected{% endif %}>₹{{val}}</option>
+          {% endfor %}
+        </select>
+        <label class="text-xs text-gray-500 px-4" for="max-price">to</label>
+        <select class="py-0 pr-6 text-sm" name="min-price" id="min-price">
+          {% for val in [200, 500, 750, 1000, "2000+"]%}
+            <option value="{{val}}"{% if params.min_price == val %}selected{% endif %}>₹{{val}}</option>
+          {% endfor %}
+        </select>
       </div>
       <div class="p-4 border-b-2 border-b-gray-100">
         <input type="checkbox" id="fk-advantage" name="fk-advantage" {% if params.fk_advantage %} checked {% endif %} />
-        <label for="fk-advantage">✅ fk-advantage</label>
+        <label for="fk-advantage">
+          <span class="bg-blue-500 text-white text-xs italic pr-2 font-semibold rounded-md">
+            <span class="bg-yellow-500 text-blue-500 text-xs rounded-xl border-2 border-blue-500 p-1 font-bold">Fk</span>
+            Assured
+          </span>
+        </label>
       </div>
       <div class="p-4 border-b-2 border-b-gray-100">
-        <h4>Customer Ratings</h4>
-        <input type="checkbox" id="4-plus" name="ratings" value="4" {% if '4' in params.ratings %} checked {% endif
-          %} />
-        <label for="4-plus">4 ★ & above</label>
-        <input type="checkbox" id="3-plus" name="ratings" value="3" {% if '3' in params.ratings %} checked {% endif
-          %} />
-        <label for="3-plus">3 ★ & above</label>
-        <input type="checkbox" id="2-plus" name="ratings" value="2" {% if '2' in params.ratings %} checked {% endif
-          %} />
-        <label for="2-plus">2 ★ & above</label>
+        <h4 class="text-sm uppercase font-semibold mb-2">Customer Ratings</h4>
+        <ul class="flex flex-col gap-4 text-sm">
+          <li>
+            <input type="checkbox" id="4-plus" name="ratings" value="4" {% if '4' in params.ratings %} checked {% endif %} />
+            <label class="pl-2 align-text-top cursor-pointer" for="4-plus">4 ★ & above</label>
+          </li>
+          <li>
+            <input type="checkbox" id="3-plus" name="ratings" value="3" {% if '3' in params.ratings %} checked {% endif %} />
+            <label class="pl-2 align-text-top cursor-pointer" for="3-plus">3 ★ & above</label>
+          </li>
+          <li>
+            <input type="checkbox" id="2-plus" name="ratings" value="2" {% if '2' in params.ratings %} checked {% endif %} />
+            <label class="pl-2 align-text-top cursor-pointer" for="2-plus">2 ★ & above</label>
+          </li>
+        </ul>
       </div>
     </div>
 
@@ -119,7 +136,7 @@
         <li class="col-span-1 row-span-1 h-96 hover:shadow-xl p-4">
           <a href="/products/{{product.id}}">
             {% if product.image %}
-              <img class="h-3/4 aspect-auto" src="{{ product.image.url }}" />
+              <img class="h-3/4 aspect-auto object-contain m-auto" src="{{ product.image.url }}" />
             {% endif %}
 
             <div class="text-sm font-normal truncate w-full">{{ product.name }}</div>
@@ -127,7 +144,7 @@
             <span class="bg-green-700 text-white text-xs rounded-sm px-2 py-0.5">{{ product.rating }} ★</span>
             {% endif %}
 
-            {% if product.flipkart_advantage %}
+            {% if product.flipkart_advantage == 'true' %}
             <span class="bg-blue-500 text-white text-xs italic pr-2 font-semibold rounded-md">
               <span class="bg-yellow-500 text-blue-500 text-xs rounded-xl border-2 border-blue-500 p-1 font-bold">Fk</span>
               Assured
