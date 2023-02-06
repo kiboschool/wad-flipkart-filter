@@ -38,12 +38,17 @@ def db_execute(script, args):
 PER_PAGE = 40
 def search_products(params):
     filter = " WHERE 1 = 1 "
+    joins = ""
     if params['brands']:
         # filter to only the products from those brands
-        brand_results = db_query("SELECT product_brands.product_id FROM brands JOIN product_brands ON product_brands.brand_id = brands.id WHERE brands.name LIKE ?", params['brands'])
-        for (i, val) in enumerate(brand_results, start=0):
-            params["brand_id_"+str(i)] = val['product_id']
-        filter = " WHERE id IN (" + ','.join([":brand_id_"+str(i) for i in range(len(brand_results))]) +") "
+        joins = " JOIN product_brands ON product_brands.product_id = products.id JOIN brands ON brands.id = product_brands.brand_id "
+        filter += " AND (" + " OR ".join(["brands.name = :brand_name_" + str(i) for i in range(len(params['brands']))]) + ") "
+        for (i, brand) in enumerate(params['brands'], start=0):
+            params['brand_name_'+str(i)] = brand
+        # brand_results = db_query("SELECT product_brands.product_id FROM brands JOIN product_brands ON product_brands.brand_id = brands.id WHERE brands.name LIKE ?", params['brands'])
+        # for (i, val) in enumerate(brand_results, start=0):
+            # params["brand_id_"+str(i)] = val['product_id']
+        # filter = " WHERE id IN (" + ','.join([":brand_id_"+str(i) for i in range(len(brand_results))]) +") "
 
     # if params['categories']:
         #"categories": request.values.getlist('category'),
@@ -73,15 +78,15 @@ def search_products(params):
             filter += " AND rating > 4"
 
     order = " ORDER BY " + sort_to_order.get(params['sort'], "id ASC ")
-    products_query = "SELECT * FROM products "
+    products_query = "SELECT products.* FROM products "
     # pagination is hard without https://flask-sqlalchemy.palletsprojects.com/en/3.0.x/pagination/
     params["offset"] = params['page'] * PER_PAGE
     params["limit"] = PER_PAGE
 
-    results = db_query(products_query + filter + order + " LIMIT :limit OFFSET :offset;", params)
+    results = db_query(products_query + joins + filter + order + " LIMIT :limit OFFSET :offset;", params)
     select_images(results)
     count_query = "SELECT COUNT(*) FROM products "
-    count = db_query(count_query + filter, params, one=True)['COUNT(*)']
+    count = db_query(count_query + joins + filter, params, one=True)['COUNT(*)']
     return results, count
 
 # supplements the product search results with the associated images
