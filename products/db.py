@@ -70,12 +70,22 @@ def search_products(params):
 
     order = " ORDER BY " + sort_to_order.get(params['sort'], "id ASC ")
     products_query = "SELECT * FROM products "
-    count_query = "SELECT COUNT(*) FROM products "
     params["offset"] = params['page'] * PER_PAGE
     params["limit"] = PER_PAGE
     results = db_query(products_query + filter + order + " LIMIT :limit OFFSET :offset;", params)
+    select_images(results)
+    count_query = "SELECT COUNT(*) FROM products "
     count = db_query(count_query + filter, params)['COUNT(*)']
     return results, count
+
+# supplements the product search results with the associated images
+def select_images(products):
+    images_query = "SELECT * FROM images WHERE images.product_id IN (" + \
+        ("?,"*len(products))[:-1] + ") GROUP BY images.product_id"
+    image_results = db_query(images_query, [r['id'] for r in products])
+    products_by_id = { product['id'] : product for product in products}
+    for image in image_results:
+        products_by_id[image['product_id']]['image'] = image
 
 def select_product_by_id_with_details(_id):
     product = db_query("SELECT * FROM products WHERE products.id = ? LIMIT 1;", (_id,))
