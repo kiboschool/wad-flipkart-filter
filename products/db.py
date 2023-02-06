@@ -37,8 +37,13 @@ def db_execute(script, args):
 
 PER_PAGE = 40
 def search_products(params):
-    # if params['brands']:
-        #"brands": request.values.getlist('brand'),
+    filter = " WHERE 1 = 1 "
+    if params['brands']:
+        # filter to only the products from those brands
+        brand_results = db_query("SELECT product_brands.product_id FROM brands JOIN product_brands ON product_brands.brand_id = brands.id WHERE brands.name LIKE ?", params['brands'])
+        for (i, val) in enumerate(brand_results, start=0):
+            params["brand_id_"+str(i)] = val['product_id']
+        filter = " WHERE id IN (" + ','.join([":brand_id_"+str(i) for i in range(len(brand_results))]) +") "
 
     # if params['categories']:
         #"categories": request.values.getlist('category'),
@@ -50,7 +55,6 @@ def search_products(params):
         "relevance": "id ASC",
         "discount": "CEIL(retail_price / discounted_price) DESC"
     }
-    filter = " WHERE 1 = 1 "
     if params["q"]:
         filter += " AND name LIKE :query "
         params["query"] = f"%{params['q']}%"
@@ -73,6 +77,7 @@ def search_products(params):
     # pagination is hard without https://flask-sqlalchemy.palletsprojects.com/en/3.0.x/pagination/
     params["offset"] = params['page'] * PER_PAGE
     params["limit"] = PER_PAGE
+
     results = db_query(products_query + filter + order + " LIMIT :limit OFFSET :offset;", params)
     select_images(results)
     count_query = "SELECT COUNT(*) FROM products "
