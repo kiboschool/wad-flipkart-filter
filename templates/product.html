@@ -41,7 +41,7 @@
       </div>
 
       <div class="my-2">
-        <div class="text-gray-500 font-medium">{{ product.brand.name }}</div>
+        <div class="text-gray-500 font-medium">{{ product.brands[0].name }}</div>
         <h1 class="text-lg">{{ product.name }}</h1>
       </div>
 
@@ -116,11 +116,13 @@
 
       <div class="my-4">
         <h4 class="text-gray-500 font-semibold text-sm">Seller</h4>
+        {% for brand in product.brands %}
         <div>
-          <a class="text-blue-500" href="{{url_for('search', brand=product.brand.name)}}">
-          {{ product.brand.name }}
+          <a class="text-blue-500" href="{{url_for('search', brand=brand.name)}}">
+          {{ brand.name }}
           </a>
         </div>
+        {% endfor %}
       </div>
     </div>
   </div>

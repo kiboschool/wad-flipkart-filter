@@ -101,9 +101,8 @@
         </div>
       {% endif %}
 
-      {% set start = params.page * page_size %}
       <div class="font-semibold m-2">
-        Showing {{start + 1}} – {{start + page_size}} of {{ count }} results
+        Showing {{products.first}} – {{products.last}} of {{ products.total }} results
         {% if params.q %} for "{{ params.q }}" {% endif %}
       </div>
 
@@ -135,12 +134,12 @@
       </div>
 
       <ul class="grid grid-cols-4 grid-rows-10 gap-2">
-        {% for product in products %}
+        {% for product in products.items %}
 
         <li class="col-span-1 row-span-1 h-96 hover:shadow-xl p-4">
           <a href="/products/{{product.id}}">
-            {% if product.image %}
-              <img class="h-3/4 aspect-auto object-contain m-auto" src="{{ product.image.url }}" />
+            {% if product.images[0] %}
+              <img class="h-3/4 aspect-auto object-contain m-auto" src="{{ product.images[0].url }}" />
             {% endif %}
 
             <div class="text-sm font-normal truncate w-full">{{ product.name }}</div>
@@ -171,23 +170,20 @@
       </ul>
 
       <!-- Pagination -->
-      <!-- ...it is challenging to do manually -->
-      {% set total_pages = ((count/page_size) | round(0, 'ceil')|int) %}
-
-      {% if total_pages > 1 %}
+      {% if products.has_next %}
         <div class="m-2 p-2 flex">
-          <div class="text-sm shrink-0">Page {{params.page}} of {{ total_pages }}</div>
+          <div class="text-sm shrink-0">Page {{products.page}} of {{ products.pages }}</div>
 
           <div class="m-auto flex gap-4 font-semibold text-sm">
-            {% if params.page > 0 %}
+            {% if products.has_next %}
             {% set next_args = request.args.copy() %}
-            {% set x = next_args.__setitem__("page", params.page - 1) %}
+            {% set x = next_args.__setitem__("page", products.prev_num) %}
               <a class="uppercase px-3 py-0 leading-8 text-blue-500" href="{{ url_for('search', **next_args) }}">
                 Previous
               </a>
             {% endif %}
 
-            {% for i in range(params.page, ([total_pages, params.page + 10]|min)) %}
+            {% for i in products.iter_pages() %}
               {% set args = request.args.copy() %}
               {% set _x=args.__setitem__("page", i) %}
               <a class="rounded-full px-3 py-0 w-8 h-8 leading-8 {% if i == params.page %} bg-blue-500  text-white {% endif %}"
@@ -197,7 +193,7 @@
             {% endfor %}
 
             {% set prev_args = request.args.copy() %}
-            {% set _x=prev_args.__setitem__("page", params.page + 1) %}
+            {% set _x=prev_args.__setitem__("page", products.next_num) %}
             <a class="uppercase px-3 py-0 leading-8 text-blue-500" href="{{ url_for('search', **prev_args) }}">
               Next
             </a>
