@@ -1,6 +1,6 @@
-from sqlalchemy import select, delete
+from sqlalchemy import select
 from sqlalchemy.orm import selectinload
-from products.models import Product, Category, Image, Brand
+from products.models import Product
 
 
 class ProductDatabase:

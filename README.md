@@ -12,39 +12,18 @@ The data for this project is originally sourced from this [Kaggle dataset](https
 
 ## Domain
 
-These are the tables and columns in the database:
+These are the tables in the database:
 
-products
-- id
-- url
-- name
-- retail_price
-- discounted_price
-- flipkart_advantage
-- rating
-- overall_rating
-- product_specifications
+- products
+- images
+- categories
+- brands
 
-images
-- id
-- product_id
-- url
+There are also two association tables:
+- product_category
+- product_brand
 
-categories
-- id
-- name
-
-product_category
-- product_id
-- category_id
-
-brands
-- id
-- name
-
-product_brand
-- product_id
-- brand_id
+You can see the columns and relationships in `models.py`
 
 ## Starter Code
 
@@ -68,7 +47,7 @@ There are three routes that `app.py` serves:
 - `'/products/<product_id>'` shows an individual product
 - `'/search'` is a search results page
 
-You should click through all of the pages to see how they currently behave. You'll be adding functionality to the search route and the search results page.
+Click through all of the pages to see how they currently behave. 
 
 ### Tailwind and NPM
 
@@ -95,6 +74,6 @@ Your task is to add the missing search filters and sorts:
 - add filter for categories
 
 ## TODO
+
 - category search
 - add index page links to category and brand searches
-- orm? some nicer way to build the queries? seems like a tough codebase to walk into

@@ -1,5 +1,6 @@
-from flask import Flask, render_template, request, redirect, abort
-from products.db import search_products, select_product_by_id_with_details, PER_PAGE
+from flask import Flask, render_template, request, abort, jsonify
+
+# from products.db import search_products, select_product_by_id_with_details, PER_PAGE
 from products.product_database import ProductDatabase
 from products.models import db
 
@@ -39,3 +40,21 @@ def show_product(product_id):
     if not product:
         abort(404, "No product with that id")
     return render_template("product.html", product=product)
+
+
+@app.get("/api/products/<product_id>")
+def api_show_product(product_id):
+    product = products_db.select_product_with_details(product_id)
+    if not product:
+        abort(404, "No product with that id")
+    return {
+        "id": product.id,
+        "name": product.name,
+        "retail_price": product.retail_price,
+        "discounted_price": product.discounted_price,
+        "flipkart_advantage": product.flipkart_advantage,
+        "rating": product.rating,
+        "overall_rating": product.overall_rating,
+        "product_specifications": product.product_specifications,
+        "brands": [b.name for b in product.brands],
+    }
