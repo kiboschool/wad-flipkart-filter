@@ -1,16 +1,14 @@
-from flask import Flask, render_template, request, abort, jsonify
-
-# from products.db import search_products, select_product_by_id_with_details, PER_PAGE
-from products.product_database import ProductDatabase
-from products.models import db
+from flask import Flask, render_template, request, abort
+from queries import Queries
+from models import db
 
 app = Flask(__name__)
 # configure the SQLite database, relative to the app instance folder
-app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///../products/products.db"
+app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///../products.db"
 # app.config["SQLALCHEMY_RECORD_QUERIES"] = True
 # initialize the app with the extension
 db.init_app(app)
-products_db = ProductDatabase(db)
+queries = Queries(db)
 
 
 @app.get("/")
@@ -30,13 +28,13 @@ def search():
         "price_max": request.values.get("max-price"),
         "sort": request.values.get("sort"),
     }
-    products_page = products_db.search_products(params)
+    products_page = queries.search_products(params)
     return render_template("search.html", products=products_page, params=params)
 
 
 @app.get("/products/<product_id>")
 def show_product(product_id):
-    product = products_db.select_product_with_details(product_id)
+    product = queries.select_product_with_details(product_id)
     if not product:
         abort(404, "No product with that id")
     return render_template("product.html", product=product)
@@ -44,17 +42,9 @@ def show_product(product_id):
 
 @app.get("/api/products/<product_id>")
 def api_show_product(product_id):
-    product = products_db.select_product_with_details(product_id)
-    if not product:
-        abort(404, "No product with that id")
-    return {
-        "id": product.id,
-        "name": product.name,
-        "retail_price": product.retail_price,
-        "discounted_price": product.discounted_price,
-        "flipkart_advantage": product.flipkart_advantage,
-        "rating": product.rating,
-        "overall_rating": product.overall_rating,
-        "product_specifications": product.product_specifications,
-        "brands": [b.name for b in product.brands],
-    }
+    abort(404, "Not Implemented yet")
+
+
+@app.get("/api/search")
+def search():
+    abort(404, "Not Implemented yet")
