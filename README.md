@@ -47,7 +47,7 @@ There are three routes that `app.py` serves:
 - `'/products/<product_id>'` shows an individual product
 - `'/search'` is a search results page
 
-Click through all of the pages to see how they currently behave. 
+Click through all of the pages to see how they currently behave.
 
 ### Tailwind and NPM
 
@@ -64,16 +64,22 @@ npm run watch-styles # watch and rebuild the styles when files change
 
 ## Your Task
 
-Right now, the search feature can filter by the name of the item, a min and max price, and by brands. It can use the default sort, or it can sort by ratings.
+### Part 1: Add missing filters
+
+Right now, the search feature can filter by the name of the item, a min and max price, and by category.
 
 Your task is to add the missing search filters and sorts:
 - add filter for items that are flipkart assured
-- add filter for ratings (checkboxes)
 - add sorting by price low-high and high-low
-- add sorting by discount
-- add filter for categories
+- add filter for brands
 
-## TODO
+### Part 2: Product API
 
-- category search
-- add index page links to category and brand searches
+You heard that if you turn your application into an API, then it's a platform, and you can make more money.
+
+Add API routes for showing a product and searching for a product.
+
+- `/api/products/<product_id>` should return a JSON representation of the product
+- `/api/search` should return a JSON list of search results. It should accept the same parameters as the regular `/search` route.
+
+Both methods should use the same query as their corresponding methods, they should just return JSON results instead of showing the HTML page.
