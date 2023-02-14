@@ -21,7 +21,7 @@ class Queries:
 
     def search_products(self, params):
         q = select(Product)
-        
+
         # apply filters to the base query
         # only for the search params that are present
         if params["q"]:
@@ -33,11 +33,12 @@ class Queries:
         if params["price_max"]:
             q = q.filter(Product.discounted_price < params["price_max"])
 
-        if params["fk_advantage"]:
-            q = q.filter(Product.flipkart_advantage == True)
-
         if params["ratings"]:
-            q = q.filter(Product.rating > params["ratings"])
+            for rating in params["ratings"]:
+                q = q.filter(Product.rating > rating)
+
+        if params["fk_advantage"] in ["on", "true", "checked"]:
+            q = q.filter(Product.flipkart_advantage == "true")
 
         if params["categories"]:
             # join to categories table
@@ -63,7 +64,7 @@ class Queries:
             .options(selectinload(Product.images))
         )
 
-        # paginate the results 
+        # paginate the results
         # limit of 40 items PER_PAGE
         # uses flask-sqlalchemy's built-in pagination
         # See https://flask-sqlalchemy.palletsprojects.com/en/3.0.x/pagination/
@@ -72,7 +73,7 @@ class Queries:
     def _order_results(self, q, sort_method):
         if sort_method == "relevance":
             return q.order_by(Product.id.asc())
-        elif sort_method == "rating": 
+        elif sort_method == "rating":
             return q.order_by(Product.rating.desc())
         elif sort_method == "discount":
             return q.order_by(Product.discount.desc())

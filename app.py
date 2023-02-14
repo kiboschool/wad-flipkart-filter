@@ -6,7 +6,7 @@ app = Flask(__name__)
 # configure the SQLite database, relative to the app instance folder
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///../products.db"
 # enable logging SQL queries
-app.config["SQLALCHEMY_ECHO"] = True
+# app.config["SQLALCHEMY_ECHO"] = True
 # initialize the app with the extension
 db.init_app(app)
 queries = Queries(db)
@@ -16,12 +16,14 @@ queries = Queries(db)
 def index():
     return render_template("index.html")
 
+
 @app.get("/products/<product_id>")
 def show_product(product_id):
     product = queries.select_product_with_details(product_id)
     if not product:
         abort(404, "No product with that id")
     return render_template("product.html", product=product)
+
 
 @app.get("/api/products/<product_id>")
 def api_show_product(product_id):
@@ -45,6 +47,7 @@ def search():
     }
     products = queries.search_products(params)
     return render_template("search.html", products=products, params=params)
+
 
 @app.get("/api/search")
 def api_search():

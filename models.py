@@ -26,7 +26,6 @@ class Product(db.Model):
     discounted_price = Column(Integer)
     flipkart_advantage = Column(Boolean)
     rating = Column(Integer)
-    overall_rating = Column(Integer)
     product_specifications = Column(Text)
     categories = relationship(
         "Category",
@@ -42,7 +41,9 @@ class Product(db.Model):
 
     def get_discount(self):
         if self.retail_price and self.discounted_price:
-            return float(self.retail_price) / float(self.discounted_price)
+            return (
+                round(float(self.discounted_price) / float(self.retail_price), 2) * 100
+            )
 
     def to_dict(self):
         return {
@@ -50,13 +51,12 @@ class Product(db.Model):
             "name": self.name,
             "retail_price": self.retail_price,
             "discounted_price": self.discounted_price,
-            "flipkart_advantage": self.flipkart_advantage, 
-            "rating": self.rating, 
-            "overall_rating": self.overall_rating, 
-            "product_specifications": self.product_specifications, 
+            "flipkart_advantage": self.flipkart_advantage,
+            "rating": self.rating,
+            "product_specifications": self.product_specifications,
             "discount": self.get_discount(),
             "categories": [category.name for category in self.categories],
-            "brands": [brand.name for brand in self.brands], 
+            "brands": [brand.name for brand in self.brands],
             "images": [image.url for image in self.images],
         }
 

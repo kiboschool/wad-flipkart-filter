@@ -77,8 +77,8 @@ The flipkart clone is looking pretty good! It's got a database of products, and 
 Right now, the search feature can filter by the name of the item, a min and max price, and by category.
 
 Your task is to add the missing search filters and sorts:
-- filter for items that are "flipkart assured"
-- a filter for brands that match the brands param
+- filter for items that have a price lower than the 'price_max' param
+- a filter for brands that match the 'brands' param
 - sorting by price, from low to high and from high to low
 
 For each of these features, the data is already being sent from the HTML form. **You do not need to edit the templates**.
