@@ -1,6 +1,7 @@
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import Text, Boolean, Integer, Column, ForeignKey
 from sqlalchemy.orm import relationship
+import json
 
 db = SQLAlchemy()
 
@@ -38,6 +39,26 @@ class Product(db.Model):
     )
     images = relationship("Image", lazy="raise_on_sql", back_populates="product")
     discount = retail_price / discounted_price
+
+    def get_discount(self):
+        if self.retail_price and self.discounted_price:
+            return float(self.retail_price) / float(self.discounted_price)
+
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "name": self.name,
+            "retail_price": self.retail_price,
+            "discounted_price": self.discounted_price,
+            "flipkart_advantage": self.flipkart_advantage, 
+            "rating": self.rating, 
+            "overall_rating": self.overall_rating, 
+            "product_specifications": self.product_specifications, 
+            "discount": self.get_discount(),
+            "categories": [category.name for category in self.categories],
+            "brands": [brand.name for brand in self.brands], 
+            "images": [image.url for image in self.images],
+        }
 
 
 class Category(db.Model):
