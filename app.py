@@ -46,5 +46,5 @@ def api_show_product(product_id):
 
 
 @app.get("/api/search")
-def search():
+def api_search():
     abort(404, "Not Implemented yet")
