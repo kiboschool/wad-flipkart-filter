@@ -43,7 +43,7 @@ class Queries:
             # join to categories table
             q = q.join(Product.categories)
             for category in params["categories"]:
-                # LIKE match for the category
+                # filter where category param is LIKE the category name
                 q = q.filter(Category.name.like(f"%{category}%"))
 
         if params["brands"]:
@@ -53,7 +53,7 @@ class Queries:
 
         # order the results
         if params["sort"]:
-            q = self.order(q, params["sort"])
+            q = self._order_results(q, params["sort"])
 
         # eager load images, categories, and brands
         # See https://docs.sqlalchemy.org/en/14/orm/loading_relationships.html#select-in-loading
@@ -69,7 +69,7 @@ class Queries:
         # See https://flask-sqlalchemy.palletsprojects.com/en/3.0.x/pagination/
         return self.db.paginate(q, per_page=Queries.PER_PAGE)
 
-    def order(self, q, sort_method):
+    def _order_results(self, q, sort_method):
         if sort_method == "relevance":
             return q.order_by(Product.id.asc())
         elif sort_method == "rating": 

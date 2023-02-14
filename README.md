@@ -10,21 +10,6 @@ Fakekart's features mostly do not work -- you can't log in, add items to the car
 
 The data for this project is originally sourced from this [Kaggle dataset](https://www.kaggle.com/datasets/PromptCloudHQ/flipkart-products) by PromptCloud. Thanks Flipkart, Kaggle and PromptCloud!
 
-## Domain
-
-These are the tables in the database:
-
-- products
-- images
-- categories
-- brands
-
-There are also two association tables:
-- product_category
-- product_brand
-
-You can see the columns and relationships in `models.py`
-
 ## Starter Code
 
 Fakekart uses Flask, Sqlite3, and [TailwindCSS](https://tailwindcss.com/).
@@ -55,6 +40,21 @@ There are three routes that `app.py` serves:
 
 Click through all of the pages to see how they currently behave.
 
+## Domain Model and Schema
+
+These tables are the database in `products.db`:
+
+- products
+- images
+- categories
+- brands
+
+There are also two association tables:
+- product_category
+- product_brand
+
+You can see the columns and relationships in `models.py`. You can also connect to the `products.db` database using sqlite3 and explore the data there.
+
 ### Optional: Tailwind and NPM
 
 This app uses [TailwindCSS](https://tailwindcss.com/) for styling.
@@ -77,16 +77,20 @@ The flipkart clone is looking pretty good! It's got a database of products, and 
 Right now, the search feature can filter by the name of the item, a min and max price, and by category.
 
 Your task is to add the missing search filters and sorts:
-- filter for items that are flipkart assured
-- a filter for brands
-- sorting by price, from low to high and high to low
+- filter for items that are "flipkart assured"
+- a filter for brands that match the brands param
+- sorting by price, from low to high and from high to low
 
-For each of these features, the data is already being sent from the HTML form. **You do not need to edit the templates**. Here are the steps to update the search feature:
+For each of these features, the data is already being sent from the HTML form. **You do not need to edit the templates**.
 
-1. In `app.py`, add the data to the `params` that are being passed into the search helper.
+Here are the steps to update the search feature:
+
+1. In `app.py`, add the data to the `params` that are being passed into the search helper, if it's not already there.
 2. In the `search_products` method of the Queries class in `queries.py`, add the logic to use the new filter.
   - check if the param is present
-  - if the param is present, adjust it using the param to get the results you want
+  - if the param is present, adjust the query `q` using the param 
+
+Look at the other filters and orders that are already implemented for hints about the syntax you'll need.
 
 ### Part 2: Product API
 
@@ -105,3 +109,8 @@ The `Product` model in `models.py` has a `.to_dict()` method that you can use to
 
 Run the automated tests to check that your API routes and updated search parameters work correctly. The automated tests only look at the API routes (not the ones that render HTML).
 
+```sh
+python -m unittest
+```
+
+Or, use `pytest` to run the tests.
